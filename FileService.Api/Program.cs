@@ -1,3 +1,4 @@
+using FileService.Api.Middlewares;
 using FileService.Api.Security;
 using FileService.Application;
 using FileService.Infrastructure;
@@ -24,6 +25,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -39,5 +42,5 @@ static void MigrateDbToLatestVersion(IApplicationBuilder app)
 {
     using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
     using var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.MigrateAsync();
+    context.Database.Migrate();
 }

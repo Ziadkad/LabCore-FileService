@@ -2,24 +2,23 @@
 using FileService.Application.Common.Extentions;
 using FileService.Application.Common.Interfaces;
 using FileService.Application.Common.Models;
+using FileService.Application.File.Models;
 using FileService.Application.Services;
 using FileService.Application.Services.Interfaces.Broker;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
-namespace FileService.Application.File.Queries;
+namespace FileService.Application.File.Commands;
 
-public record GetFileQuery(List<string> Folders, string FileName) : IRequest<PhysicalFileResult>;
+public record DeleteFileCommand(List<string> Folders, string FileName):IRequest;
 
-public class GetFileQueryHandler(
+public class DeleteFileCommandHandler(    
     IUserContext userContext, 
     IFileRepository fileRepository,
     IFileService fileService, 
     IUnitOfWork unitOfWork, 
-    IMessageProducer messageProducer
-    ) : IRequestHandler<GetFileQuery, PhysicalFileResult>
+    IMessageProducer messageProducer) : IRequestHandler<DeleteFileCommand>
 {
-    public async Task<PhysicalFileResult> Handle(GetFileQuery request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteFileCommand request, CancellationToken cancellationToken)
     {
         string directoryPath = PathExtention.CreatePath(request.Folders);
         string filePath = Path.Combine(directoryPath, request.FileName);
@@ -29,14 +28,20 @@ public class GetFileQueryHandler(
         {
             throw new NotFoundException("File", request.FileName);
         }
-
         if (!file.IsAccessible && userContext.GetUserRole() == UserRole.Researcher)
         {
             throw new ForbiddenException();
         }
-        var extension = Path.GetExtension(request.FileName).ToLowerInvariant();
-        var contentType = FileExtention.GetContentType(extension);
-        var result = new PhysicalFileResult(filePath, contentType);
-        return await Task.FromResult(result);
+
+        FileDto fileDto = new FileDto(file.Path, file.ProjectId, file.StudyId, file.TaskId, file.Context);
+        fileRepository.Remove(file);
+        var result = await unitOfWork.SaveChangesAsync(cancellationToken);
+        if (result <= 0)
+        {
+            throw new InternalServerException();
+        }
+        await fileService.DeleteAsync(filePath);
+        
+        await messageProducer.SendDeleteAsync(fileDto);
     }
 }

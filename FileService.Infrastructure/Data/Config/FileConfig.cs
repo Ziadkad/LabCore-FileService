@@ -8,10 +8,12 @@ public class FileConfig: IEntityTypeConfiguration<File>
 {
     public void Configure(EntityTypeBuilder<File> builder)
     {
+        builder.HasKey(file => file.Id);
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.FileType).IsRequired().HasMaxLength(10);
         builder.Property(e => e.Path).IsRequired();
         builder.Property(e => e.IsAccessible).IsRequired();
         builder.Property(e => e.ProjectId).IsRequired();
+        builder.Property(e => e.Context).IsRequired();
     }
 }
