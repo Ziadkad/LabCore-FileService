@@ -6,6 +6,7 @@ using FileService.Application.File.Models;
 using FileService.Application.Services;
 using FileService.Application.Services.Interfaces.Broker;
 using MediatR;
+using Shared.Models;
 
 namespace FileService.Application.File.Commands;
 
@@ -33,7 +34,7 @@ public class DeleteFileCommandHandler(
             throw new ForbiddenException();
         }
 
-        FileDto fileDto = new FileDto(file.Path, file.ProjectId, file.StudyId, file.TaskId, file.Context);
+        FileMessage fileMessage = new FileMessage(file.Path, file.ProjectId, file.StudyId, file.TaskId, file.Context);
         fileRepository.Remove(file);
         var result = await unitOfWork.SaveChangesAsync(cancellationToken);
         if (result <= 0)
@@ -42,6 +43,6 @@ public class DeleteFileCommandHandler(
         }
         await fileService.DeleteAsync(filePath);
         
-        await messageProducer.SendDeleteAsync(fileDto);
+        await messageProducer.SendDeleteAsync(fileMessage);
     }
 }

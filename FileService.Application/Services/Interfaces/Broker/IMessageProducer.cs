@@ -1,9 +1,11 @@
-﻿using FileService.Application.File.Models;
+﻿
+
+using Shared.Models;
 
 namespace FileService.Application.Services.Interfaces.Broker;
 
 public interface IMessageProducer
 {
-    Task SendAsync(FileDto message);
-    Task SendDeleteAsync(FileDto message);
+    Task SendAsync(FileMessage message);
+    Task SendDeleteAsync(FileMessage message);
 }

@@ -2,13 +2,14 @@
 using FileService.Application.Services.Interfaces.Broker;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Shared.Models;
 
 namespace FileService.Infrastructure.ExternalServices.BrokerService;
 
 public class MessageProducer(ISendEndpointProvider sendEndpointProvider, IConfiguration configuration) : IMessageProducer
 {
 
-    public async Task SendAsync(FileDto message)
+    public async Task SendAsync(FileMessage message)
     {
         var brokerSettings =  configuration.GetSection("BrokerSettings");
         string queueName = brokerSettings["AddFileEndpoint"];
@@ -22,7 +23,7 @@ public class MessageProducer(ISendEndpointProvider sendEndpointProvider, IConfig
         await endpoint.Send(message);
     }
 
-    public async Task SendDeleteAsync(FileDto message)
+    public async Task SendDeleteAsync(FileMessage message)
     {
         var brokerSettings =  configuration.GetSection("BrokerSettings");
         string queueName = brokerSettings["DeleteFileEndpoint"];

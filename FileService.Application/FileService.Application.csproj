@@ -20,6 +20,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FileService.Domain\FileService.Domain.csproj" />
+      <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
 </Project>

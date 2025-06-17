@@ -1,8 +1,8 @@
 ﻿using FileService.Domain.File;
 
-namespace FileService.Application.File.Models;
+namespace Shared.Models;
 
-public class FileDto(string path, Guid projectId, Guid? studyId, Guid? taskId, FileContext context)
+public class FileMessage(string path, Guid projectId, Guid? studyId, Guid? taskId, FileContext context)
 {
     public string Path { get; set; } = path;
     public Guid ProjectId { get; set; } = projectId;

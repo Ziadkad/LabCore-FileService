@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Shared.Models;
 
 namespace FileService.Application.File.Commands;
 
@@ -74,8 +75,8 @@ public class UploadFileCommandHandler(
             throw new InternalServerException();
         }
 
-        FileDto fileDto = new FileDto(file.Path, file.ProjectId, file.StudyId, file.TaskId, file.Context);
-        await messageProducer.SendAsync(fileDto);
+        FileMessage fileMessage = new FileMessage(file.Path, file.ProjectId, file.StudyId, file.TaskId, file.Context);
+        await messageProducer.SendAsync(fileMessage);
         
         return path;
     }
