@@ -59,7 +59,7 @@ public class FileController :BaseController
     }
     
     [Authorize]
-    [HttpDelete("{projectId:guid}/{filename}")]
+    [HttpDelete("app/Files/Projects/{projectId:guid}/{filename}")]
     public async Task<IActionResult> DeleteProjectFile(string filename, Guid projectId)
     {
         List<string> folders = new List<string>()
@@ -72,7 +72,7 @@ public class FileController :BaseController
     
         
     [Authorize]
-    [HttpDelete("{projectId:guid}/{studyId:guid}/{filename}")]
+    [HttpDelete("app/Files/Projects/{projectId:guid}/{studyId:guid}/{filename}")]
     public async Task<IActionResult> DeleteStudyFile(string filename, Guid projectId, Guid studyId)
     {
         List<string> folders = new List<string>()
@@ -85,7 +85,7 @@ public class FileController :BaseController
 
     
     [Authorize]
-    [HttpDelete("{projectId:guid}/{studyId:guid}/{taskId:guid}/{filename}")]
+    [HttpDelete("app/Files/Projects/{projectId:guid}/{studyId:guid}/{taskId:guid}/{filename}")]
     public async Task<IActionResult> DeleteTaskFile(string filename, Guid projectId, Guid studyId, Guid taskId)
     {
         List<string> folders = new List<string>()

@@ -3,6 +3,7 @@ using FileService.Api.Security;
 using FileService.Application;
 using FileService.Infrastructure;
 using FileService.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,14 @@ await app.RunAsync();
 static void MigrateDbToLatestVersion(IApplicationBuilder app)
 {
     using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-    using var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    try
+    {
+        context.Database.Migrate();
+    }
+    catch (SqlException ex) when (ex.Message.Contains("already exists"))
+    {
+        // Optional: log or skip
+    }
 }
