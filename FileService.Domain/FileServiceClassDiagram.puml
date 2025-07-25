@@ -1,0 +1,41 @@
+﻿@startuml
+
+' ===== BaseModel =====
+class BaseModel {
+  - DateTime CreatedOn
+  - Guid CreatedBy
+  - DateTime? ModifiedOn
+  - Guid? ModifiedBy
+  - bool IsArchived
+
+  + void UpdateAudit(Guid)
+  + void CreateAudit(Guid)
+  + void SetArchived()
+}
+
+' ===== File =====
+class File {
+  - Guid Id
+  - string Name
+  - string FileType
+  - string Path
+  - bool IsAccessible
+  - Guid ProjectId
+  - Guid? StudyId
+  - Guid? TaskId
+  - FileContext Context
+
+  + constructor(...)
+}
+
+' ===== Enum: FileContext =====
+enum FileContext {
+  Project
+  Study
+  Task
+}
+
+' ===== Inheritance =====
+File --|> BaseModel
+
+@enduml
